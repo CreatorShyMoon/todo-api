@@ -1,14 +1,136 @@
-const API_URL = '/api/todos';
+const API_URL = '/api';
+let token = localStorage.getItem('token');
+let username = localStorage.getItem('username');
+
+// === Инициализация ===
+document.addEventListener('DOMContentLoaded', () => {
+    if (token) {
+        showTodoScreen();
+    }
+});
+
+// === Авторизация ===
+function showTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+    document.querySelectorAll('.auth-tab')[tab === 'login' ? 0 : 1].classList.add('active');
+}
+
+async function login() {
+    const loginUsername = document.getElementById('loginUsername').value.trim();
+    const loginPassword = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    errorEl.textContent = '';
+
+    if (!loginUsername || !loginPassword) {
+        errorEl.textContent = 'Заполните все поля';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: loginUsername, password: loginPassword })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            errorEl.textContent = data.message || 'Ошибка входа';
+            return;
+        }
+
+        token = data.token;
+        username = data.username;
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', username);
+        showTodoScreen();
+    } catch (e) {
+        errorEl.textContent = 'Сервер недоступен';
+    }
+}
+
+async function register() {
+    const regUsername = document.getElementById('regUsername').value.trim();
+    const regEmail = document.getElementById('regEmail').value.trim();
+    const regPassword = document.getElementById('regPassword').value;
+    const errorEl = document.getElementById('regError');
+    errorEl.textContent = '';
+
+    if (!regUsername || !regEmail || !regPassword) {
+        errorEl.textContent = 'Заполните все поля';
+        return;
+    }
+
+    if (regPassword.length < 6) {
+        errorEl.textContent = 'Пароль минимум 6 символов';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: regUsername, email: regEmail, password: regPassword })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            errorEl.textContent = data.message || 'Ошибка регистрации';
+            return;
+        }
+
+        token = data.token;
+        username = data.username;
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', username);
+        showTodoScreen();
+    } catch (e) {
+        errorEl.textContent = 'Сервер недоступен';
+    }
+}
+
+function logout() {
+    token = null;
+    username = null;
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    document.getElementById('authScreen').style.display = 'block';
+    document.getElementById('todoScreen').style.display = 'none';
+}
+
+function showTodoScreen() {
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('todoScreen').style.display = 'block';
+    document.getElementById('currentUser').textContent = username;
+    loadTodos();
+}
+
+// === API запросы с JWT ===
+function authHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    };
+}
 
 async function loadTodos(completed) {
-    let url = API_URL;
+    let url = `${API_URL}/todos`;
     if (completed !== undefined) {
         url += `?completed=${completed}`;
     }
 
-    const response = await fetch(url);
-    const todos = await response.json();
+    const response = await fetch(url, { headers: authHeaders() });
 
+    if (response.status === 401 || response.status === 403) {
+        logout();
+        return;
+    }
+
+    const todos = await response.json();
     const list = document.getElementById('todoList');
     list.innerHTML = '';
 
@@ -45,14 +167,19 @@ async function addTodo() {
         return;
     }
 
-    await fetch(API_URL, {
+    const response = await fetch(`${API_URL}/todos`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({
             title: title,
             description: descInput.value.trim()
         })
     });
+
+    if (response.status === 401 || response.status === 403) {
+        logout();
+        return;
+    }
 
     titleInput.value = '';
     descInput.value = '';
@@ -60,12 +187,18 @@ async function addTodo() {
 }
 
 async function toggleTodo(id, completed) {
-    const response = await fetch(`${API_URL}/${id}`);
+    const response = await fetch(`${API_URL}/todos/${id}`, { headers: authHeaders() });
+
+    if (response.status === 401 || response.status === 403) {
+        logout();
+        return;
+    }
+
     const todo = await response.json();
 
-    await fetch(`${API_URL}/${id}`, {
+    await fetch(`${API_URL}/todos/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({
             title: todo.title,
             description: todo.description,
@@ -79,7 +212,11 @@ async function toggleTodo(id, completed) {
 async function deleteTodo(id) {
     if (!confirm('Удалить задачу?')) return;
 
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/todos/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+    });
+
     loadTodos();
 }
 
@@ -88,5 +225,3 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-
-document.addEventListener('DOMContentLoaded', () => loadTodos());

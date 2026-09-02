@@ -7,8 +7,43 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>TODO List</h1>
+
+    <!-- Экран авторизации -->
+    <div id="authScreen" class="container">
+        <h1>Вход</h1>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="showTab('login')">Вход</button>
+            <button class="auth-tab" onclick="showTab('register')">Регистрация</button>
+        </div>
+
+        <!-- Форма входа -->
+        <div id="loginForm" class="auth-form">
+            <input type="text" id="loginUsername" placeholder="Имя пользователя" />
+            <input type="password" id="loginPassword" placeholder="Пароль" />
+            <button onclick="login()">Войти</button>
+            <div id="loginError" class="error"></div>
+        </div>
+
+        <!-- Форма регистрации -->
+        <div id="registerForm" class="auth-form" style="display:none">
+            <input type="text" id="regUsername" placeholder="Имя пользователя" />
+            <input type="email" id="regEmail" placeholder="Email" />
+            <input type="password" id="regPassword" placeholder="Пароль (мин. 6 символов)" />
+            <button onclick="register()">Зарегистрироваться</button>
+            <div id="regError" class="error"></div>
+        </div>
+    </div>
+
+    <!-- Экран задач (после входа) -->
+    <div id="todoScreen" class="container" style="display:none">
+        <div class="header">
+            <h1>TODO List</h1>
+            <div class="user-info">
+                <span id="currentUser"></span>
+                <button class="logout-btn" onclick="logout()">Выйти</button>
+            </div>
+        </div>
 
         <div class="add-form">
             <input type="text" id="titleInput" placeholder="Название задачи" />

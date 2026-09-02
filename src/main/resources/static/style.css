@@ -25,6 +25,105 @@ h1 {
     color: #2c3e50;
 }
 
+/* === Header === */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin-bottom: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.logout-btn {
+    padding: 6px 14px;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: #c0392b;
+}
+
+/* === Auth === */
+.auth-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    background: #ecf0f1;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.auth-tab.active {
+    background: #3498db;
+    color: #fff;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+}
+
+.auth-form input:focus {
+    border-color: #3498db;
+}
+
+.auth-form button {
+    width: 100%;
+    padding: 12px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.auth-form button:hover {
+    background: #2980b9;
+}
+
+.error {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* === Add Form === */
 .add-form {
     display: flex;
     gap: 10px;
@@ -60,6 +159,7 @@ h1 {
     background: #2980b9;
 }
 
+/* === Filters === */
 .filters {
     display: flex;
     gap: 10px;
@@ -83,6 +183,7 @@ h1 {
     color: #fff;
 }
 
+/* === Todo List === */
 ul {
     list-style: none;
 }
