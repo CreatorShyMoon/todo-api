@@ -1,0 +1,39 @@
+# Compiled class files
+target/
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.local
+
+# H2 database files
+*.db
+*.mv.db
+*.trace.db

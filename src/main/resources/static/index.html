@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TODO List</h1>
+
+        <div class="add-form">
+            <input type="text" id="titleInput" placeholder="Название задачи" />
+            <input type="text" id="descInput" placeholder="Описание (необязательно)" />
+            <button onclick="addTodo()">Добавить</button>
+        </div>
+
+        <div class="filters">
+            <button onclick="loadTodos()" class="active">Все</button>
+            <button onclick="loadTodos(false)">Активные</button>
+            <button onclick="loadTodos(true)">Выполненные</button>
+        </div>
+
+        <ul id="todoList"></ul>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
